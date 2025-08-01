@@ -1,6 +1,8 @@
 spring:
   application:
     name: omo-ai-agent
+  profiles:
+    active: local
 
 # 服务器启动配置
 server:
