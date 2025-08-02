@@ -1,8 +1,10 @@
 package com.erokin.omoaiagent.app;
 
+import com.erokin.omoaiagent.advisor.MySimpleLoggerAdvisor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
@@ -26,7 +28,9 @@ public class LoveApp {
                 .builder(dashScopeChatModel)
                 .defaultSystem(SYSTEM_PROMPT)
                 .defaultAdvisors(
-                        new MessageChatMemoryAdvisor(chatMemory)
+                        new MessageChatMemoryAdvisor(chatMemory),
+                        //自定义拦截器
+                        new MySimpleLoggerAdvisor()
                 )
                 .build();
     }
