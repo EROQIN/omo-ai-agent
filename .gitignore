@@ -2,6 +2,7 @@
 .DS_Store
 application-local.yml
 !/src/main/java/com/erokin/omoaiagent/demo/invoke/TestApiKey.java
+tmp
 
 HELP.md
 target/
