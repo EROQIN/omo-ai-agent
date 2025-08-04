@@ -4,6 +4,20 @@ spring:
   profiles:
     active: local
 
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/postgres
+#    username: postgres
+#    password: postgres
+  ai:
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: cosine_distance
+        dimensions: 1536
+        max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+
+
 # 服务器启动配置
 server:
     port: 8123
