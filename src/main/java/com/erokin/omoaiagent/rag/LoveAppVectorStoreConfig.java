@@ -15,6 +15,9 @@ public class LoveAppVectorStoreConfig {
 
     @Resource
     private LoveAppDocumentLoader loveAppDocumentLoader;
+
+    @Resource
+    private MyKeyWordEnricher myKeyWordEnricher;
     
     @Bean
     VectorStore loveAppVectorStore(EmbeddingModel dashscopeEmbeddingModel) {
@@ -22,6 +25,10 @@ public class LoveAppVectorStoreConfig {
                 .build();
         // 加载文档
         List<Document> documents = loveAppDocumentLoader.loadMarkdowns();
+        // 自主切分文档（不建议使用这种切词模式）
+        // documents = myTokenTextSplitter.splitCustomized(documents);
+        // 自动补充关键词元信息
+        documents = myKeyWordEnricher.enrichDocuments(documents);
         simpleVectorStore.add(documents);
         return simpleVectorStore;
     }

@@ -2,6 +2,8 @@ package com.erokin.omoaiagent.app;
 
 import com.erokin.omoaiagent.advisor.MySimpleLoggerAdvisor;
 import com.erokin.omoaiagent.chatMemory.FileBasedChatMemory;
+import com.erokin.omoaiagent.rag.LoveAppRagCustomAdvisorFactory;
+import com.erokin.omoaiagent.rag.QueryRewriter;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -34,6 +36,9 @@ public class LoveApp {
 
     @Resource
     private VectorStore pgVectorVectorStore;
+
+    @Resource
+    private QueryRewriter queryRewriter;
 
 
 
@@ -101,6 +106,9 @@ public class LoveApp {
 
 
     public String doChatWithRag(String message, String chatId) {
+        //对message进行重写
+        message = queryRewriter.doQueryRewrite(message);
+
         ChatResponse chatResponse = chatClient
                 .prompt()
                 .user(message)
@@ -109,15 +117,17 @@ public class LoveApp {
                 // 开启日志，便于观察效果
                 .advisors(new MySimpleLoggerAdvisor())
                 // 应用知识库问答
-                // .advisors(new QuestionAnswerAdvisor(loveAppVectorStore))
+                .advisors(new QuestionAnswerAdvisor(loveAppVectorStore))
                 // 应用 RAG 检索增强服务（基于云知识库）
-                .advisors(loveAppRagCloudAdvisor)
+                // .advisors(loveAppRagCloudAdvisor)
                 // 应用 RAG 检索增强服务（基于PGVector向量存储）
                 // .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
+                // 应用自定义的上下文查询增强器
+                .advisors(LoveAppRagCustomAdvisorFactory.createLoveAppRagCustomAdvisor(loveAppVectorStore,"单身"))
                 .call()
                 .chatResponse();
         String content = chatResponse.getResult().getOutput().getText();
-        log.info("content: {}", content);
+        // log.info("content: {}", content);
         return content;
     }
 

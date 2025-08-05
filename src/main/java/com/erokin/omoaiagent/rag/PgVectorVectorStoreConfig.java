@@ -18,6 +18,9 @@ import static org.springframework.ai.vectorstore.pgvector.PgVectorStore.PgIndexT
 public class PgVectorVectorStoreConfig {
     @Resource
     private LoveAppDocumentLoader loveAppDocumentLoader;
+
+    @Resource
+    private MyTokenTextSplitter myTokenTextSplitter;
     @Bean
     public VectorStore pgVectorVectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel dashscopeEmbeddingModel) {
         PgVectorStore pgVectorStore = PgVectorStore.builder(jdbcTemplate, dashscopeEmbeddingModel)
@@ -31,6 +34,8 @@ public class PgVectorVectorStoreConfig {
                 .build();
         //加载文档
         List<Document> documents = loveAppDocumentLoader.loadMarkdowns();
+
+
         pgVectorStore.add(documents);
         return pgVectorStore;
     }
