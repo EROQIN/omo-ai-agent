@@ -3,19 +3,25 @@ spring:
     name: omo-ai-agent
   profiles:
     active: local
+  ai:
+    dashscope:
+      api-key: 你的api-key
+      chat:
+        options:
+        model: qwen-plus
+    vectorstore:
+      pgvector:
+              index-type: HNSW
+              distance-type: cosine_distance
+              dimensions: 1536
+              max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
 
-#spring:
+  #spring:
 #  datasource:
 #    url: jdbc:postgresql://localhost:5432/postgres
 #    username: postgres
 #    password: postgres
-  ai:
-    vectorstore:
-      pgvector:
-        index-type: HNSW
-        distance-type: cosine_distance
-        dimensions: 1536
-        max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+
 
 
 # 服务器启动配置
@@ -42,3 +48,6 @@ knife4j:
   enable: true
   setting:
     language: zh_cn
+# searchApi
+search-api:
+  api-key: 你的api-key
