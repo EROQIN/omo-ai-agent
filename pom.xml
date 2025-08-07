@@ -126,7 +126,12 @@
             <version>1.0.0-M6</version>
         </dependency>
 
-
+        <!-- Jsoup HTML解析库 -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.18.1</version>
+        </dependency>
 
     </dependencies>
 
