@@ -15,8 +15,10 @@ spring:
               distance-type: cosine_distance
               dimensions: 1536
               max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
-
-  #spring:
+    mcp:
+      client:
+              stdio:
+                servers-configuration: classpath:mcp-servers.json
 #  datasource:
 #    url: jdbc:postgresql://localhost:5432/postgres
 #    username: postgres
