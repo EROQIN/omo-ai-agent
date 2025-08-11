@@ -75,4 +75,12 @@ class LoveAppTest {
         Assertions.assertNotNull(answer);
     }
 
+    @Test
+    void doChatWithMcp() {
+        // 测试图片搜索MCP
+        String chatId = UUID.randomUUID().toString();
+        String message = "请使用图片搜索MCP，搜索一张 suitable for couple 的图片";
+        String answer = loveApp.doChatWithMcp(message, chatId);
+        Assertions.assertNotNull(answer);
+    }
 }
