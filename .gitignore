@@ -1,6 +1,7 @@
 ### CUSTOM ###
 .DS_Store
 application-local.yml
+application-prod.yml
 !/src/main/java/com/erokin/omoaiagent/demo/invoke/TestApiKey.java
 tmp
 
