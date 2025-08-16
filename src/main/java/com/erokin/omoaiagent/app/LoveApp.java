@@ -5,6 +5,8 @@ import com.erokin.omoaiagent.chatMemory.FileBasedChatMemory;
 import com.erokin.omoaiagent.rag.LoveAppRagCustomAdvisorFactory;
 import com.erokin.omoaiagent.rag.QueryRewriter;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -29,7 +31,7 @@ import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvis
 public class LoveApp {
 
     private final ChatClient chatClient;
-
+    
     @Resource
     private VectorStore loveAppVectorStore;
 
@@ -174,7 +176,9 @@ public class LoveApp {
         log.info("content: {}", content);
         return content;
     }
+    // 使用可选注入，避免MCP服务不可用时导致应用启动失败
     @Resource
+    @Lazy
     private ToolCallbackProvider toolCallbackProvider;
 
     /**
@@ -184,6 +188,12 @@ public class LoveApp {
      * @return
      */
     public String doChatWithMcp(String message, String chatId) {
+        // 检查toolCallbackProvider是否可用
+        if (toolCallbackProvider == null) {
+            log.warn("MCP服务不可用，回退到普通对话模式");
+            return doChat(message, chatId);
+        }
+        
         ChatResponse response = chatClient
                 .prompt()
                 .user(message)

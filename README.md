@@ -40,8 +40,53 @@ omo-ai-agent/
 │   ├── rag            # RAG模块（向量存储/检索）
 │   └── config         # 配置类
 ├── resources          # 配置文件与文档资源
-│   ├── application.yml # 主配置文件
-│   └── document       # 示例文档
+│   ├── application.yml      # 主配置文件
+│   ├── application-prod.yml # 生产环境配置文件
+│   └── document             # 示例文档
+```
+
+## 配置说明
+
+项目使用Spring Profiles进行环境管理，默认使用`local`环境，生产环境使用`prod`。
+
+### 本地开发环境配置
+在`src/main/resources/application.yml`中配置：
+- DashScope API密钥
+- 数据库连接信息
+- 服务器端口(8123)
+- 其他相关配置
+
+### 生产环境配置
+在`src/main/resources/application-prod.yml`中配置：
+- 生产环境的DashScope API密钥
+- 生产数据库连接信息
+- 其他生产环境特定配置
+
+## 部署方式
+
+### Docker部署（推荐）
+项目包含Dockerfile，可直接构建Docker镜像：
+
+```bash
+# 构建Docker镜像
+docker build -t omo-ai-agent .
+
+# 运行容器
+docker run -p 8123:8123 omo-ai-agent
+```
+
+Docker镜像将使用生产环境配置(`prod` profile)启动应用。
+
+### 传统部署方式
+```bash
+# 编译打包
+mvn clean package -DskipTests
+
+# 使用生产环境配置运行
+java -jar target/omo-ai-agent-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+
+# 或使用默认配置运行（本地开发）
+java -jar target/omo-ai-agent-0.0.1-SNAPSHOT.jar
 ```
 
 ## 开发环境
@@ -69,9 +114,17 @@ java -jar target/omo-ai-agent-0.0.1-SNAPSHOT.jar
 # application.yml 配置示例
 spring:
   ai:
-    mcp:
-      client:
-        timeout: 60000  # MCP客户端超时时间
+    dashscope:
+      api-key: 你的api-key  # 替换为你的DashScope API密钥
+      chat:
+        options:
+          model: qwen-plus
+```
+
+## API文档
+项目集成了Swagger UI，可通过以下地址访问API文档：
+```
+http://localhost:8123/api/doc.html
 ```
 
 ## 贡献指南

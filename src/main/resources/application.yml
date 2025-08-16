@@ -8,21 +8,24 @@ spring:
       api-key: 你的api-key
       chat:
         options:
-        model: qwen-plus
+          model: qwen-plus
     vectorstore:
       pgvector:
               index-type: HNSW
               distance-type: cosine_distance
               dimensions: 1536
               max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
-    mcp:
-      client:
-              stdio:
-                servers-configuration: classpath:mcp-servers.json
-#  datasource:
-#    url: jdbc:postgresql://localhost:5432/postgres
-#    username: postgres
-#    password: postgres
+#    mcp:
+#      client:
+#              timeout: 60000
+#              stdio:
+#                servers-configuration: classpath:mcp-servers.json
+
+# 数据库配置
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
 
 
 
