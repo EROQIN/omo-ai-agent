@@ -5,6 +5,7 @@ import com.erokin.omoaiagent.agent.model.AgentState;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -41,6 +42,9 @@ public abstract class BaseAgent {
     //Memory 记忆(需要自主维护会话上下文)
     private List<Message> messageList = new ArrayList<>();
 
+    //Response To User
+    private List<String> feedbackList = new ArrayList<>();
+
     /**
      * 运行代理
      * @param userPrompt 用户提示词
@@ -74,6 +78,13 @@ public abstract class BaseAgent {
                 String stepResult = step();
                 String result = "Step " + stepNumber + ": " + stepResult;
                 results.add(result);
+                if(!feedbackList.isEmpty()){
+                    feedbackList.forEach(feedback -> {
+                        messageList.add(new AssistantMessage(feedback));
+                        log.info(feedback);
+                    });
+                    feedbackList.clear();
+                }
 
             }
 
@@ -143,6 +154,19 @@ public abstract class BaseAgent {
                     results.add(result);
                     //输出每一步的结果到SSE
                     sseEmitter.send(result);
+                    if(!feedbackList.isEmpty()){
+                    feedbackList.forEach(feedback -> {
+                        messageList.add(new AssistantMessage(feedback));
+                        try {
+                            sseEmitter.send(feedback);
+                        } catch (IOException e) {
+                            sseEmitter.completeWithError(e);
+                        }
+                    });
+                    feedbackList.clear();
+                    }
+
+
 
                 }
 

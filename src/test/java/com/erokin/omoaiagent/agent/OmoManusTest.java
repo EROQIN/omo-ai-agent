@@ -20,4 +20,11 @@ class OmoManusTest {
         String answer = omoManus.run(userPrompt);
         Assertions.assertNotNull(answer);
     }
+    @Test
+    void run2() {
+        String userPrompt = """  
+                你好""";
+        String answer = omoManus.run(userPrompt);
+        Assertions.assertNotNull(answer);
+    }
 }

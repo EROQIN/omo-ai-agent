@@ -21,7 +21,9 @@ public class ToolRegistration {
         TerminalOperationTool terminalOperationTool = new TerminalOperationTool();
         PDFGenerationTool pdfGenerationTool = new PDFGenerationTool();
         TerminateTool terminateTool = new TerminateTool();
+        ResponseToUserTool responseToUserTool = new ResponseToUserTool();
         return ToolCallbacks.from(
+                responseToUserTool,
                 terminateTool,
             fileOperationTool,
             webSearchTool,

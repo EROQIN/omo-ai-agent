@@ -20,6 +20,7 @@ import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.ai.tool.ToolCallback;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -111,7 +112,13 @@ public class ToolCallAgent extends ReActAgent {
         if(toolResponseMessage.getResponses().stream().anyMatch(response -> response.name().equals("doTerminate"))){
             setState(AgentState.FINISHED);
         }
-        String results = toolResponseMessage.getResponses().stream().map(response -> response.name() + "返回的结果" + response.responseData())
+        //判断是否调用了反馈工具
+        if(Objects.equals(toolResponseMessage.getResponses().getLast().name(), "responseToUser")){
+            String s = toolResponseMessage.getResponses().getLast().responseData();
+            getFeedbackList().add(s);
+            getMessageList().add(new UserMessage("反馈消息发送成功，接下来，你可以 `调用其他工具继续任务` 或 `使用doTerminate方法结束会话，等待用户的进一步输入` "));
+        }
+        String results = toolResponseMessage.getResponses().stream().map(response -> response.name())
                 .collect(Collectors.joining("\n"));
         log.info(results);
         return results;

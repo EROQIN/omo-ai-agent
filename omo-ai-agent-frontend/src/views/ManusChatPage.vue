@@ -87,12 +87,18 @@ export default {
     const formatMessage = (text) => {
       if (!text) return ''
       
+      // 首先处理转义的换行符
+      let processedText = text
+        .replace(/\\n/g, '\n')  // 处理\n转义序列
+        .replace(/\\r/g, '\r')  // 处理\r转义序列
+        .replace(/^"|"$/g, '')  // 移除首尾的引号
+      
       // 处理步骤式消息
       const stepPattern = /(Step \d+:|步骤 \d+：)/gi
       const resultPattern = /(返回的结果|思考完成|无需行动|Terminated|Reach max steps)/gi
       
-      if (stepPattern.test(text) || resultPattern.test(text)) {
-        let formatted = text
+      if (stepPattern.test(processedText) || resultPattern.test(processedText)) {
+        let formatted = processedText
           .replace(/Step (\d+):\s*/gi, '<div class="step-header"><strong>步骤 $1:</strong></div>')
           .replace(/步骤 (\d+)：\s*/gi, '<div class="step-header"><strong>步骤 $1:</strong></div>')
           .replace(/返回的结果/g, '<div class="result-label">执行结果:</div>')
@@ -100,13 +106,15 @@ export default {
           .replace(/无需行动/g, '<div class="no-action">✅ 无需进一步行动</div>')
           .replace(/Terminated:\s*Reach max steps \((\d+)\)/gi, '<div class="max-steps">⏰ 达到最大步骤数 ($1)</div>')
           .replace(/\n/g, '<br>')
-          .replace(/^"|"$/g, '')
+          .replace(/\r\n/g, '<br>')
         
         return formatted
       }
       
-      // 普通消息保持原样
-      return text
+      // 普通消息 - 直接处理换行
+      return processedText
+        .replace(/\n/g, '<br>')
+        .replace(/\r\n/g, '<br>')
     }
 
     const sendMessage = async () => {
